@@ -1,4 +1,5 @@
 import {Component} from 'react'
+import {v4 as uuidV4} from 'uuid'
 
 import ContactItem from './components/ContactItem'
 
@@ -6,19 +7,19 @@ import './App.css'
 
 const initialContactsList = [
   {
-    id: 1,
+    id: uuidV4(),
     name: 'Ram',
     mobileNo: 9999988888,
     isFavorite: false,
   },
   {
-    id: 2,
+    id: uuidV4(),
     name: 'Pavan',
     mobileNo: 8888866666,
     isFavorite: true,
   },
   {
-    id: 3,
+    id: uuidV4(),
     name: 'Nikhil',
     mobileNo: 9999955555,
     isFavorite: false,
@@ -32,8 +33,31 @@ class App extends Component {
     mobileNo: '',
   }
 
+  toggleStar = id => {
+    this.setState(pervState => ({
+      contactsList: pervState.contactsList.map(eachOne => {
+        if (eachOne.id === id) {
+          return {...eachOne, isFavorite: !eachOne.isFavorite}
+        }
+        return {...eachOne}
+      }),
+    }))
+  }
+
   onAddContact = event => {
     event.preventDefault()
+    const {name, mobileNo} = this.state
+    const newItem = {
+      id: uuidV4(),
+      name,
+      mobileNo,
+      isFavorite: false,
+    }
+    this.setState(pervState => ({
+      contactsList: [...pervState.contactsList, newItem],
+      name: '',
+      mobileNo: '',
+    }))
   }
 
   onChangeMobileNo = event => {
@@ -74,7 +98,11 @@ class App extends Component {
               <p className="table-header-cell">Mobile Number</p>
             </li>
             {contactsList.map(eachContact => (
-              <ContactItem key={eachContact.id} contactDetails={eachContact} />
+              <ContactItem
+                key={eachContact.id}
+                contactDetails={eachContact}
+                toggleStar={this.toggleStar}
+              />
             ))}
           </ul>
         </div>
